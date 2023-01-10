@@ -10,6 +10,7 @@ public class GamePiece : MonoBehaviour
     private PieceType type;
     private Grid grid;
     private MovablePiece movableComponent;
+    private ColorPiece colorComponent;
 
     public int X
     {
@@ -38,9 +39,15 @@ public class GamePiece : MonoBehaviour
         get { return movableComponent; }
     }
 
+    public ColorPiece ColorComponent
+    {
+        get { return colorComponent; }
+    }
+
     void Awake()
     {
         movableComponent = GetComponent<MovablePiece>();
+        colorComponent = GetComponent<ColorPiece>();
     }
 
     // Start is called before the first frame update
@@ -66,5 +73,10 @@ public class GamePiece : MonoBehaviour
     public bool IsMovable()
     {
         return movableComponent != null;
+    }
+
+    public bool IsColored()
+    {
+        return colorComponent != null;
     }
 }

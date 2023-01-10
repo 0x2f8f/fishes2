@@ -154,6 +154,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xDim: 9
   yDim: 9
+  piecePrefabs:
+  - type: 0
+    prefab: {fileID: 7126805901237909871, guid: 2080f76163ab94eba81155262c67f995, type: 3}
+  backgroundPrefab: {fileID: 1509596810121218380, guid: 0063c703609ce4056ab9301f1e12cf77, type: 3}
 --- !u!4 &67184381
 Transform:
   m_ObjectHideFlags: 0
@@ -162,7 +166,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 67184379}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -4.9, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
