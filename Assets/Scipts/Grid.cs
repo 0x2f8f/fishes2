@@ -6,6 +6,8 @@ public class Grid : MonoBehaviour
 {
     public int xDim;
     public int yDim;
+    public float fillTime;
+
     public PiecePrefab[] piecePrefabs;
     public GameObject backgroundPrefab;
     private Dictionary<PieceType, GameObject> piecePrefabDict; //словарь возможных элементов на поле
@@ -34,27 +36,11 @@ public class Grid : MonoBehaviour
         pieces = new GamePiece[xDim, yDim];
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                //GameObject piece = (GameObject)Instantiate(piecePrefabDict[PieceType.NORMAL], GetWorldPosition(x, y), Quaternion.identity);
-                //GameObject piece = (GameObject)Instantiate(piecePrefabDict[PieceType.NORMAL], Vector3.zero, Quaternion.identity);
-                //piece.name = $"Piece ({x},{y})";
-                //piece.transform.parent = transform;
-                //pieces[x, y] = piece.GetComponent<GamePiece>();
-                //pieces[x, y].Init(x, y, this, PieceType.NORMAL);
-
-                //if (pieces[x, y].IsMovable()) {
-                //    //Debug.Log($"({x},{y})");
-                //    pieces[x, y].MovableComponent.Move(x, y);
-                //}
-
-                //if (pieces[x, y].IsColored()) {
-                //    pieces[x, y].ColorComponent.SetColor((ColorType)Random.Range(0, pieces[x, y].ColorComponent.NumColors));
-                //}
-
                 SpawnNewPiece(x, y, PieceType.EMPTY);
             }
         }
 
-        Fill();
+        StartCoroutine(Fill());
     }
 
     // Update is called once per frame
@@ -80,10 +66,10 @@ public class Grid : MonoBehaviour
     }
 
     //Заполнение. Вызывает FillStep пока доска не будет заполнена
-    public void Fill()
+    public IEnumerator Fill()
     {
         while(FillStep()) {
-
+            yield return new WaitForSeconds(fillTime);
         }
     }
 
@@ -97,7 +83,7 @@ public class Grid : MonoBehaviour
                 if (piece.IsMovable()) {
                     GamePiece pieceBelow = pieces[x, y + 1];
                     if (pieceBelow.Type == PieceType.EMPTY) {
-                        piece.MovableComponent.Move(x, y + 1);
+                        piece.MovableComponent.Move(x, y + 1, fillTime);
                         pieces[x, y + 1] = piece;
                         SpawnNewPiece(x, y, PieceType.EMPTY);
                         movedPiece = true;
@@ -114,7 +100,7 @@ public class Grid : MonoBehaviour
 
                 pieces[x, 0] = newPiece.GetComponent<GamePiece>();
                 pieces[x, 0].Init(x, -1, this, PieceType.NORMAL);
-                pieces[x, 0].MovableComponent.Move(x, 0);
+                pieces[x, 0].MovableComponent.Move(x, 0, fillTime);
                 pieces[x, 0].ColorComponent.SetColor((ColorType)Random.Range(0, pieces[x, 0].ColorComponent.NumColors));
                 movedPiece = true;
             }
