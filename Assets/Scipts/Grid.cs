@@ -83,6 +83,7 @@ public class Grid : MonoBehaviour
                 if (piece.IsMovable()) {
                     GamePiece pieceBelow = pieces[x, y + 1];
                     if (pieceBelow.Type == PieceType.EMPTY) {
+                        Destroy(pieceBelow.gameObject);
                         piece.MovableComponent.Move(x, y + 1, fillTime);
                         pieces[x, y + 1] = piece;
                         SpawnNewPiece(x, y, PieceType.EMPTY);
@@ -95,6 +96,7 @@ public class Grid : MonoBehaviour
         for (int x = 0; x < xDim; x++) {
             GamePiece pieceBelow = pieces[x, 0];
             if (pieceBelow.Type == PieceType.EMPTY) {
+                Destroy(pieceBelow.gameObject);
                 GameObject newPiece = (GameObject)Instantiate(piecePrefabDict[PieceType.NORMAL], GetWorldPosition(x, -1), Quaternion.identity);
                 newPiece.transform.parent = transform;
 
