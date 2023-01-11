@@ -35,22 +35,26 @@ public class Grid : MonoBehaviour
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 //GameObject piece = (GameObject)Instantiate(piecePrefabDict[PieceType.NORMAL], GetWorldPosition(x, y), Quaternion.identity);
-                GameObject piece = (GameObject)Instantiate(piecePrefabDict[PieceType.NORMAL], Vector3.zero, Quaternion.identity);
-                piece.name = $"Piece ({x},{y})";
-                piece.transform.parent = transform;
-                pieces[x, y] = piece.GetComponent<GamePiece>();
-                pieces[x, y].Init(x, y, this, PieceType.NORMAL);
+                //GameObject piece = (GameObject)Instantiate(piecePrefabDict[PieceType.NORMAL], Vector3.zero, Quaternion.identity);
+                //piece.name = $"Piece ({x},{y})";
+                //piece.transform.parent = transform;
+                //pieces[x, y] = piece.GetComponent<GamePiece>();
+                //pieces[x, y].Init(x, y, this, PieceType.NORMAL);
 
-                if (pieces[x, y].IsMovable()) {
-                    //Debug.Log($"({x},{y})");
-                    pieces[x, y].MovableComponent.Move(x, y);
-                }
+                //if (pieces[x, y].IsMovable()) {
+                //    //Debug.Log($"({x},{y})");
+                //    pieces[x, y].MovableComponent.Move(x, y);
+                //}
 
-                if (pieces[x, y].IsColored()) {
-                    pieces[x, y].ColorComponent.SetColor((ColorType)Random.Range(0, pieces[x, y].ColorComponent.NumColors));
-                }
+                //if (pieces[x, y].IsColored()) {
+                //    pieces[x, y].ColorComponent.SetColor((ColorType)Random.Range(0, pieces[x, y].ColorComponent.NumColors));
+                //}
+
+                SpawnNewPiece(x, y, PieceType.EMPTY);
             }
         }
+
+        Fill();
     }
 
     // Update is called once per frame
@@ -62,5 +66,61 @@ public class Grid : MonoBehaviour
     public Vector2 GetWorldPosition(int x, int y)
     {
         return new Vector2(transform.position.x - xDim/2.0f + x, transform.position.y + yDim/2.0f - y);
+    }
+
+    public GamePiece SpawnNewPiece(int x, int y, PieceType type)
+    {
+        GameObject newPiece = (GameObject)Instantiate(piecePrefabDict[type], GetWorldPosition(x, y), Quaternion.identity);
+        newPiece.transform.parent = transform;
+
+        pieces[x, y] = newPiece.AddComponent<GamePiece>();
+        pieces[x, y].Init(x, y, this, type);
+
+        return pieces[x, y];
+    }
+
+    //Заполнение. Вызывает FillStep пока доска не будет заполнена
+    public void Fill()
+    {
+        while(FillStep()) {
+
+        }
+    }
+
+    //Шаг перемещения. Перемещает на одну позицию
+    public bool FillStep()
+    {
+        bool movedPiece = false;
+        for (int y = yDim - 2; y >= 0; y--) {
+            for (int x = 0; x < xDim; x++) {
+                GamePiece piece = pieces[x, y];
+                if (piece.IsMovable()) {
+                    GamePiece pieceBelow = pieces[x, y + 1];
+                    if (pieceBelow.Type == PieceType.EMPTY) {
+                        piece.MovableComponent.Move(x, y + 1);
+                        pieces[x, y + 1] = piece;
+                        SpawnNewPiece(x, y, PieceType.EMPTY);
+                        movedPiece = true;
+                    }
+                }
+            }
+        }
+
+        for (int x = 0; x < xDim; x++) {
+            GamePiece pieceBelow = pieces[x, 0];
+            if (pieceBelow.Type == PieceType.EMPTY) {
+                GameObject newPiece = (GameObject)Instantiate(piecePrefabDict[PieceType.NORMAL], GetWorldPosition(x, -1), Quaternion.identity);
+                newPiece.transform.parent = transform;
+
+                pieces[x, 0] = newPiece.GetComponent<GamePiece>();
+                pieces[x, 0].Init(x, -1, this, PieceType.NORMAL);
+                pieces[x, 0].MovableComponent.Move(x, 0);
+                pieces[x, 0].ColorComponent.SetColor((ColorType)Random.Range(0, pieces[x, 0].ColorComponent.NumColors));
+                movedPiece = true;
+            }
+
+        }
+
+        return movedPiece;
     }
 }
