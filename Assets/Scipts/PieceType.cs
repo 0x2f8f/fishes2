@@ -2,5 +2,6 @@
 {
     EMPTY,
     NORMAL,
+    BUBBLE,
     COUNT,
 }

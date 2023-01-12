@@ -70,6 +70,24 @@ public class GamePiece : MonoBehaviour
         type = _type;
     }
 
+    //нажали на элемент
+    private void OnMouseDown()
+    {
+        grid.PressPiece(this);
+    }
+
+    //перетащили на элемент
+    private void OnMouseEnter()
+    {
+        grid.EnterPiece(this);
+    }
+
+    //отпустили кнопку мыши
+    private void OnMouseUp()
+    {
+        grid.ReleasePiece();
+    }
+
     public bool IsMovable()
     {
         return movableComponent != null;
